@@ -49,8 +49,8 @@ int main()
         }
         size_t half1 {id1.size()/2};
         size_t half2 {id2.size()/2 + id2.size()%2};
-        int64 start {std::stoi(id1)};
-        int64 end {std::stoi(id2)};
+        int64 start {std::stoll(id1)};
+        int64 end {std::stoll(id2)};
         if (half1 == 0 && half2 == 0)
         {
             continue;
