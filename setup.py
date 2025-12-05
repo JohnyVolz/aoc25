@@ -1,7 +1,4 @@
 import os
-import requests
-
-
 
 def main():
     day = input("Enter the day number: ")
