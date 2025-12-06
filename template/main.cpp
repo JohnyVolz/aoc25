@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include "../auxilary/types.hpp"
+#include "../auxilary/errors.hpp"
 #include "../auxilary/aoc_helper.cpp"
 
 namespace fs = std::filesystem;

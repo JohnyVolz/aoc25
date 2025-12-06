@@ -28,6 +28,7 @@ using complex128 = std::complex<float128>;
 using byte = std::byte;
 using string = std::string;
 using string_view = std::string_view;
+using stringstream = std::stringstream;
 
 template <typename T>
 using optional = std::optional<T>;
