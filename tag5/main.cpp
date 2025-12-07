@@ -28,8 +28,8 @@ int main()
     auto input_data{read_file(input_file.path().string())};
 
 
-    // auto data = test_data;
-    auto data = input_data;
+    auto data = test_data;
+    // auto data = input_data;
     size_t separator{data.find("\n\n")};
     std::stringstream s_ranges{data.substr(0,separator)};
     string range{};
@@ -60,7 +60,7 @@ int main()
     // std::println("{}", sum);
     std::println("Start");
     vector<pair<int64, int64>> prev_ranges{};
-    int64 fresh{0};
+    int64 fresh_ids{0};
     for (auto r: ranges)
     {   
         int64 start{r.first};
@@ -105,10 +105,10 @@ int main()
         std::println("{}, {}, {}", start, end, end-start+1);
         if (start <= end)
         {
-            fresh += end-start+1;
+            fresh_ids += end-start+1;
         }
     }
-    std::println("{}", fresh);
+    std::println("{}", fresh_ids);
     return 0;
 }
 
