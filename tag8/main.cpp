@@ -44,6 +44,29 @@ pair<size_t, size_t> find_min_dist(vector<vector<float64>> &grid)
     return result;
 }
 
+vector<size_t> get_intersection(vector<size_t> &v1, vector<size_t> &v2)
+{   
+    vector<size_t> res{};
+    std::sort(v1.begin(), v1.end());
+    std::sort(v2.begin(), v2.end());
+    std::set_intersection(v1.begin(),v1.end(),v2.begin(), v2.end(),std::back_inserter(res));
+    return res;
+}
+
+vector<size_t> get_union(vector<size_t> &v1, vector<size_t> &v2)
+{   
+    vector<size_t> res{};
+    std::sort(v1.begin(), v1.end());
+    std::sort(v2.begin(), v2.end());
+    std::set_union(v1.begin(),v1.end(),v2.begin(), v2.end(),std::back_inserter(res));
+    return res;
+}
+
+bool contains(vector<size_t> &v, size_t e)
+{
+    return std::find(v.begin(), v.end(), e) != v.end();
+}
+
 int64 part_1(string &data, int64 n_connection)
 {
     vector<Point> points{};
@@ -85,9 +108,84 @@ int64 part_1(string &data, int64 n_connection)
         std::println("");
     }
 
-    pair<size_t, size_t> min_dist{find_min_dist(grid)};
-    std::println("{},{}: {}", min_dist.first, min_dist.second, grid.at(min_dist.first).at(min_dist.second));
-    // std::println("{}", std::distance(grid.begin(), std::min_element(grid.begin(), grid.end())));
+    vector<vector<float64>> connection_grid(grid.size(), vector<float64>(grid.size(), 0));
+
+
+    for (auto i{0}; i < n_connection; ++i)
+    {
+        pair<size_t, size_t> min_dist{find_min_dist(grid)};
+        std::println("{},{}: {}", min_dist.first, min_dist.second, grid.at(min_dist.first).at(min_dist.second));
+        grid.at(min_dist.first).at(min_dist.second) = std::numeric_limits<float64>::infinity();
+        grid.at(min_dist.second).at(min_dist.first) = std::numeric_limits<float64>::infinity();
+        connection_grid.at(min_dist.first).at(min_dist.second) = 1;
+        connection_grid.at(min_dist.second).at(min_dist.first) = 1;
+
+    }
+    std::println("Connections:");
+    std::println("   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19");
+    for (auto row : connection_grid)
+    {   
+        for (auto e : row)
+        {
+            std::print(" {:3}", e);
+        }
+        std::println("");
+    }
+
+    std::map<size_t, vector<size_t>> connections_count{};
+    for (auto i{0}; i < connection_grid.size(); ++i)
+    {
+        connections_count[i] = {};
+    }
+    for (auto i{0}; i < connection_grid.size(); ++i)
+    {
+        for (auto j{0}; j < connection_grid.size(); ++j)
+        {   
+            if (j==i || connection_grid.at(i).at(j) == 0)
+            {
+                continue;
+            }
+
+            auto connections{get_union(connections_count.at(i), connections_count.at(j))};
+            if (!contains(connections, i))
+            {
+                connections.push_back(i);
+            }
+            if (!contains(connections, j))
+            {
+                connections.push_back(j);
+            }
+            bool changed{true};
+            while (changed)
+            {
+                changed = false;
+                for (auto c: connections)
+                {
+                    auto new_connections{get_union(connections, connections_count.at(c))};
+                    if (new_connections != connections)
+                    {
+                        changed = true;
+                        connections = new_connections;
+                        break;
+                    }
+                }
+            }
+
+            for (auto c: connections)
+            {
+                connections_count.at(c) = connections;
+            }
+        }
+    }
+    for (auto entry: connections_count)
+    {   
+        std::print("{}:",entry.first);
+        for (auto c: entry.second)
+        {
+            std::print(" {}", c);
+        }
+        std::println("");
+    }
 
     int64 result{0};
     return result;
