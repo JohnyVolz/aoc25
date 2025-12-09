@@ -99,37 +99,17 @@ int64 part_1(string &data, int64 n_connection)
         grid.push_back(row);
     }
 
-    for (auto row : grid)
-    {
-        for (auto e : row)
-        {
-            std::print(" {:7.4}", e);
-        }
-        std::println("");
-    }
-
     vector<vector<float64>> connection_grid(grid.size(), vector<float64>(grid.size(), 0));
 
 
     for (auto i{0}; i < n_connection; ++i)
     {
         pair<size_t, size_t> min_dist{find_min_dist(grid)};
-        std::println("{},{}: {}", min_dist.first, min_dist.second, grid.at(min_dist.first).at(min_dist.second));
         grid.at(min_dist.first).at(min_dist.second) = std::numeric_limits<float64>::infinity();
         grid.at(min_dist.second).at(min_dist.first) = std::numeric_limits<float64>::infinity();
         connection_grid.at(min_dist.first).at(min_dist.second) = 1;
         connection_grid.at(min_dist.second).at(min_dist.first) = 1;
 
-    }
-    std::println("Connections:");
-    std::println("   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19");
-    for (auto row : connection_grid)
-    {   
-        for (auto e : row)
-        {
-            std::print(" {:3}", e);
-        }
-        std::println("");
     }
 
     std::map<size_t, vector<size_t>> connections_count{};
@@ -177,17 +157,71 @@ int64 part_1(string &data, int64 n_connection)
             }
         }
     }
-    for (auto entry: connections_count)
-    {   
-        std::print("{}:",entry.first);
-        for (auto c: entry.second)
+    // for (auto entry: connections_count)
+    // {   
+    //     std::print("{}:",entry.first);
+    //     for (auto c: entry.second)
+    //     {
+    //         std::print(" {}", c);
+    //     }
+    //     std::println("");
+    // }
+
+    vector<vector<size_t>> constellations{};
+    for (auto &entry: connections_count)
+    {
+        auto c{entry.second};
+        if (c.size() == 0)
         {
-            std::print(" {}", c);
+            c = {entry.first};
         }
-        std::println("");
+        bool found{false};
+        for (auto &constellation : constellations)
+        {
+            if (c == constellation)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            constellations.push_back(c);
+        }
     }
 
-    int64 result{0};
+    // for (auto entry: constellations)
+    // {   
+    //     for (auto c: entry)
+    //     {
+    //         std::print(" {}", c);
+    //     }
+    //     std::println("");
+    // }
+
+    vector<size_t> num_connections{};
+    for (auto &c: constellations)
+    {
+        num_connections.push_back(c.size());
+    }
+    // for (auto &c: num_connections)
+    // {
+    //     std::print("{} ", c);
+    // }
+    // std::println("");
+    std::sort(num_connections.begin(), num_connections.end());
+    // for (auto &c: num_connections)
+    // {
+    //     std::print("{} ", c);
+    // }
+    // std::println("");
+
+    int64 result{1};
+    for (auto i{0}; i < 3; ++i)
+    {
+        result *= num_connections.at(num_connections.size()-i-1);
+        // std::println("{}", num_connections.at(num_connections.size()-i-1));
+    }
     return result;
 }
 
@@ -218,15 +252,15 @@ int main()
     auto input_data{read_file(input_file.path().string())};
 
     auto test_result_part_1{part_1(test_data, 10)};
-    // auto result_part_1{part_1(input_data, 1000)};
+    auto result_part_1{part_1(input_data, 1000)};
     std::println("Part 1:");
     std::println("Test {}, correct is 40", test_result_part_1);
-    // std::println("Result: {}", result_part_1);
+    std::println("Result: {}", result_part_1);
 
     // auto test_result_part_2{part_2(test_data)};
     // auto result_part_2{part_2(input_data)};
     // std::println("Part 2:");
-    // std::println("Test {}, correct is ...", test_result_part_2);
+    // std::println("Test {}, correct is 25272", test_result_part_2);
     // std::println("Result: {}", result_part_2);
 
     return 0;
