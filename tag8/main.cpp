@@ -62,12 +62,12 @@ vector<size_t> get_union(vector<size_t> &v1, vector<size_t> &v2)
     return res;
 }
 
-bool contains(vector<size_t> &v, size_t e)
+bool contains(vector<size_t> &v, uint64 e)
 {
     return std::find(v.begin(), v.end(), e) != v.end();
 }
 
-int64 part_1(string &data, int64 n_connection)
+vector<Point> parse_points(string &data)
 {
     vector<Point> points{};
     stringstream data_stream{data};
@@ -82,7 +82,11 @@ int64 part_1(string &data, int64 n_connection)
         Point point{x, y, z};
         points.push_back(point);
     }
+    return points;
+}
 
+vector<vector<float64>> get_distance_grid(vector<Point> &points)
+{
     vector<vector<float64>> grid;
     for (auto p1 : points)
     {
@@ -98,6 +102,14 @@ int64 part_1(string &data, int64 n_connection)
         }
         grid.push_back(row);
     }
+    return grid;
+}
+
+int64 part_1(string &data, int64 n_connection)
+{
+    vector<Point> points{parse_points(data)};
+    vector<vector<float64>> grid{get_distance_grid(points)};
+
 
     vector<vector<float64>> connection_grid(grid.size(), vector<float64>(grid.size(), 0));
 
@@ -157,15 +169,15 @@ int64 part_1(string &data, int64 n_connection)
             }
         }
     }
-    // for (auto entry: connections_count)
-    // {   
-    //     std::print("{}:",entry.first);
-    //     for (auto c: entry.second)
-    //     {
-    //         std::print(" {}", c);
-    //     }
-    //     std::println("");
-    // }
+    for (auto entry: connections_count)
+    {   
+        std::print("{}:",entry.first);
+        for (auto c: entry.second)
+        {
+            std::print(" {}", c);
+        }
+        std::println("");
+    }
 
     vector<vector<size_t>> constellations{};
     for (auto &entry: connections_count)
@@ -226,8 +238,56 @@ int64 part_1(string &data, int64 n_connection)
 }
 
 int64 part_2(string &data)
-{
+{ 
     int64 result{0};
+    vector<Point> points{parse_points(data)};
+    vector<vector<float64>> grid{get_distance_grid(points)};
+
+    std::map<size_t, vector<size_t>> connections{};
+    for (uint64 i{0}; i < grid.size(); ++i)
+    {
+        connections[i] = {i};
+    }
+
+    while (true)
+    {
+        pair<size_t, size_t> min_dist{find_min_dist(grid)};
+        grid.at(min_dist.first).at(min_dist.second) = std::numeric_limits<float64>::infinity();
+        grid.at(min_dist.second).at(min_dist.first) = std::numeric_limits<float64>::infinity();
+        
+
+        auto connection_union{get_union(connections.at(min_dist.first), connections.at(min_dist.second))};
+
+        for (auto c: connection_union)
+        {
+            connections.at(c) = connection_union;
+        }
+
+        // for (auto entry: connections)
+        // {   
+        //     std::print("{}:",entry.first);
+        //     for (auto c: entry.second)
+        //     {
+        //         std::print(" {}", c);
+        //     }
+        //     std::println("");
+        // }
+        bool all_connected{true};
+        for (auto entry: connections)
+        {
+            if (entry.second.size() != grid.size())
+            {
+                all_connected = false;
+                break;
+            }
+        }
+        if (all_connected)
+        {
+            result = points.at(min_dist.first).x * points.at(min_dist.second).x;
+            break;
+        }
+    }
+    
 
     return result;
 }
@@ -252,16 +312,16 @@ int main()
     auto input_data{read_file(input_file.path().string())};
 
     auto test_result_part_1{part_1(test_data, 10)};
-    auto result_part_1{part_1(input_data, 1000)};
+    // auto result_part_1{part_1(input_data, 1000)};
     std::println("Part 1:");
     std::println("Test {}, correct is 40", test_result_part_1);
-    std::println("Result: {}", result_part_1);
+    // std::println("Result: {}", result_part_1);
 
-    // auto test_result_part_2{part_2(test_data)};
-    // auto result_part_2{part_2(input_data)};
-    // std::println("Part 2:");
-    // std::println("Test {}, correct is 25272", test_result_part_2);
-    // std::println("Result: {}", result_part_2);
+    auto test_result_part_2{part_2(test_data)};
+    auto result_part_2{part_2(input_data)};
+    std::println("Part 2:");
+    std::println("Test {}, correct is 25272", test_result_part_2);
+    std::println("Result: {}", result_part_2);
 
     return 0;
 }
