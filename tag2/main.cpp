@@ -8,49 +8,9 @@
 
 namespace fs = std::filesystem;
 
-int main()
-{   
-    fs::path parent_path{fs::current_path().parent_path()};
-    fs::path file_path{parent_path / "tag2" / "test.txt"};
-    fs::directory_entry dirEntry{file_path};
-    if (!dirEntry.exists() || !dirEntry.is_regular_file())
-    {
-        throw std::runtime_error("file does not exist: " + file_path.string());
-    }
-
-    auto raw_input{read_file(dirEntry.path().string())};
-
-    // Split input into pairs
-    vector<pair<string, string>> data{};
-    int32 last{0};
-    while (true)
-    {
-        size_t minus{raw_input.find("-", last)};
-        size_t comma{raw_input.find(",", last + 1)};
-
-        if (minus == string::npos)
-        {
-            break;
-        }
-        if (comma == string::npos)
-        {
-            pair<string, string> ids = {raw_input.substr(last + 1, minus - last - 1), raw_input.substr(minus + 1)};
-            data.push_back(ids);
-            break;
-        }
-        pair<string, string> ids = {raw_input.substr(last + 1, minus - last - 1), raw_input.substr(minus + 1, comma - minus - 1)};
-        data.push_back(ids);
-        last = comma;
-    }
-
-    // // Print pairs
-    // for (const auto& [id1, id2] : data)
-    // {
-    //     std::println("{}, {}", id1, id2);
-    // }
-
+void part1(vector<pair<string, string>> data)
+{
     int64 result{0};
-    int64 result2{0};
     for (const auto &[id1, id2] : data)
     {
         if (id1.size() % 2 && id2.size() % 2)
@@ -106,7 +66,50 @@ int main()
         // std::println("{}, {}", half1, half2);
     }
     std::println("Part 1: {}", result);
-    std::println("Part 2: {}", result2);
+}
+
+int main()
+{   
+    fs::path parent_path{fs::current_path().parent_path()};
+    fs::path file_path{parent_path / "tag2" / "input.txt"};
+    fs::directory_entry dirEntry{file_path};
+    if (!dirEntry.exists() || !dirEntry.is_regular_file())
+    {
+        throw std::runtime_error("file does not exist: " + file_path.string());
+    }
+
+    auto raw_input{read_file(dirEntry.path().string())};
+
+    // Split input into pairs
+    vector<pair<string, string>> data{};
+    int32 last{0};
+    while (true)
+    {
+        size_t minus{raw_input.find("-", last)};
+        size_t comma{raw_input.find(",", last + 1)};
+
+        if (minus == string::npos)
+        {
+            break;
+        }
+        if (comma == string::npos)
+        {
+            pair<string, string> ids = {raw_input.substr(last + 1, minus - last - 1), raw_input.substr(minus + 1)};
+            data.push_back(ids);
+            break;
+        }
+        pair<string, string> ids = {raw_input.substr(last + 1, minus - last - 1), raw_input.substr(minus + 1, comma - minus - 1)};
+        data.push_back(ids);
+        last = comma;
+    }
+
+    // // Print pairs
+    // for (const auto& [id1, id2] : data)
+    // {
+    //     std::println("{}, {}", id1, id2);
+    // }
+
+    part1(data);
 
     return 0;
 }
