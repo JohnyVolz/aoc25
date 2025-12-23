@@ -40,7 +40,8 @@ template <typename K, typename V>
 using map = std::map<K, V>; // Dictionary with keys of type K and values of type V
 template <typename T, typename S>
 using pair = std::pair<T, S>; // Tuple of two elements of type T and S
-
+template <typename T>
+using set = std::set<T>; // Set of unique elements of type T
 
 // Use make_unique and make_shared to create instances of unique_ptr and shared_ptr
 template <typename T>
