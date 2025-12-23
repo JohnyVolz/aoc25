@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <memory>
+#include <queue>
 
 using int8 = std::int8_t;
 using uint8 = std::uint8_t;
@@ -43,6 +44,10 @@ template <typename T, typename S>
 using pair = std::pair<T, S>; // Tuple of two elements of type T and S
 template <typename T>
 using set = std::set<T>; // Set of unique elements of type T
+template <typename T>
+using queue = std::queue<T>; // Queue of elements of type T
+template <typename T>
+using deque = std::deque<T>; // Double-ended queue of elements of type T
 
 // Use make_unique and make_shared to create instances of unique_ptr and shared_ptr
 template <typename T>
