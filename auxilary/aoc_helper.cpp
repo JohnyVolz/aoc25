@@ -42,14 +42,33 @@ vector<vector<string>> read_file_to_grid(string path)
     vector<string> line_v;
     string line;
     while (std::getline(in, line))
-    {   
-        for (char c: line)
+    {
+        for (char c : line)
         {
             line_v.push_back(string(1, c));
         }
         grid.push_back(line_v);
         line_v.clear();
-
     }
     return grid;
+}
+
+template <typename T>
+bool v_contains(const std::vector<T> &vec, T element)
+{
+    if (std::find(vec.begin(), vec.end(), element) != vec.end())
+    {
+        return true;
+    }
+    return false;
+}
+
+template <typename T>
+bool q_contains(const std::deque<T> &que, T &element)
+{
+    if (std::find(que.begin(), que.end(), element) != que.end())
+    {
+        return true;
+    }
+    return false;
 }
