@@ -169,15 +169,15 @@ int64 part_1(string &data, int64 n_connection)
             }
         }
     }
-    for (auto entry: connections_count)
-    {   
-        std::print("{}:",entry.first);
-        for (auto c: entry.second)
-        {
-            std::print(" {}", c);
-        }
-        std::println("");
-    }
+    // for (auto entry: connections_count)
+    // {   
+    //     std::print("{}:",entry.first);
+    //     for (auto c: entry.second)
+    //     {
+    //         std::print(" {}", c);
+    //     }
+    //     std::println("");
+    // }
 
     vector<vector<size_t>> constellations{};
     for (auto &entry: connections_count)
