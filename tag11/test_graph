@@ -1,0 +1,31 @@
+digraph {
+	svr [fillcolor=red style=filled]
+	aaa
+	fft [fillcolor=red style=filled]
+	bbb
+	tty
+	ccc
+	ddd
+	hub
+	eee
+	dac [fillcolor=red style=filled]
+	fff
+	ggg
+	hhh
+	svr -> aaa
+	svr -> bbb
+	aaa -> fft
+	fft -> ccc
+	bbb -> tty
+	tty -> ccc
+	ccc -> ddd
+	ccc -> eee
+	ddd -> hub
+	hub -> fff
+	eee -> dac
+	dac -> fff
+	fff -> ggg
+	fff -> hhh
+	ggg -> out
+	hhh -> out
+}
