@@ -63,8 +63,8 @@ bool v_contains(const std::vector<T> &vec, T element)
     return false;
 }
 
-template <typename T>
-bool q_contains(const std::deque<T> &que, T &element)
+template <typename T, typename S>
+bool q_contains(const std::deque<T> &que, S &element)
 {
     if (std::find(que.begin(), que.end(), element) != que.end())
     {
