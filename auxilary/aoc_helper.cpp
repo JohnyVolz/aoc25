@@ -24,16 +24,10 @@ string read_file(fs::path path)
     {
         throw std::runtime_error("file does not exist: " + path.string());
     }
-    
-    std::ifstream in(path);
-    if (!in)
-    {
-        throw std::runtime_error("failed to open file: " + string(path));
-    }
-    std::ostringstream oss;
-    oss << in.rdbuf();
-    return oss.str();
+
+    return read_file(path.string());
 }
+
 
 vector<string> read_file_to_vector(string path)
 {
@@ -50,6 +44,18 @@ vector<string> read_file_to_vector(string path)
     }
     return lines;
 }
+
+vector<string> read_file_to_vector(fs::path path)
+{
+    fs::directory_entry input_file{path};
+    if (!input_file.exists() || !input_file.is_regular_file())
+    {
+        throw std::runtime_error("file does not exist: " + path.string());
+    }
+    
+    return read_file_to_vector(path.string());
+}
+
 
 vector<vector<string>> read_file_to_grid(string path)
 {
@@ -71,6 +77,17 @@ vector<vector<string>> read_file_to_grid(string path)
         line_v.clear();
     }
     return grid;
+}
+
+vector<vector<string>> read_file_to_grid(fs::path path)
+{
+    fs::directory_entry input_file{path};
+    if (!input_file.exists() || !input_file.is_regular_file())
+    {
+        throw std::runtime_error("file does not exist: " + path.string());
+    }
+    
+    return read_file_to_grid(path.string());
 }
 
 template <typename T>
