@@ -9,7 +9,7 @@ if ((day < 1 || day > 12)); then
     return
 fi
 # project vartiable is "dayXX" where XX is the day variable
-project=$(printf "day%02d" $1)
+project=$(printf "tag%02d" $1)
 
 # get session cookie from file if .session exists
 if [[ -f ".session" ]]; then
