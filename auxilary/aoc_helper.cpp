@@ -3,8 +3,28 @@
 
 #include "types.hpp"
 
+namespace fs = std::filesystem;
+
 string read_file(string path)
 {
+    std::ifstream in(path);
+    if (!in)
+    {
+        throw std::runtime_error("failed to open file: " + string(path));
+    }
+    std::ostringstream oss;
+    oss << in.rdbuf();
+    return oss.str();
+}
+
+string read_file(fs::path path)
+{   
+    fs::directory_entry input_file{path};
+    if (!input_file.exists() || !input_file.is_regular_file())
+    {
+        throw std::runtime_error("file does not exist: " + path.string());
+    }
+    
     std::ifstream in(path);
     if (!in)
     {
