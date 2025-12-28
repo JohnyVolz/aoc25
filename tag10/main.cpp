@@ -133,6 +133,38 @@ public:
         }
         return return_value;
     }
+
+    vector<uint32> get_max_presses(this auto& self, vector<uint32>& current_joltage)
+    {
+        vector<uint32> max_presses{};
+        for (auto button: self.m_buttons_num)
+        {   
+            uint32 presses{UINT32_MAX};
+            for (auto number: button)
+            {
+                if (self.m_joltage.at(number) - current_joltage.at(number) < presses 
+                and self.m_joltage.at(number) - current_joltage.at(number) >= 0)
+                {
+                    presses = self.m_joltage.at(number) - current_joltage.at(number);
+                }
+            }
+            if (presses == UINT32_MAX)
+                presses = 0;
+            max_presses.push_back(presses);
+        }
+        return max_presses;
+    }
+    
+    void joltage_press_2(this auto& self, vector<uint32>& current_joltage)
+    {   
+        vector<uint32> max_presses{self.get_max_presses(current_joltage)};
+        
+        std::println("Max presses per button:");
+        for (auto i{0}; i < max_presses.size(); ++i)
+        {
+            std::println("Button {} can be pressed max {} times", i, max_presses.at(i));
+        }
+    }
 };
 
 int64 part_1(vector<string> &data)
@@ -156,9 +188,10 @@ int64 part_2(vector<string> &data)
     {
         auto machine = Machine(line);
         vector<uint32> current_joltage(machine.m_joltage.size(), 0);
-        auto res{machine.joltage_press(0, current_joltage)};
-        std::println("{}", res);
-        result += res;
+        // auto res{machine.joltage_press(0, current_joltage)};
+        // std::println("{}", res);
+        // result += res;
+        machine.joltage_press_2(current_joltage);
     }
 
     return result;
@@ -173,15 +206,15 @@ int main()
     auto test_data{read_file_to_vector(test_file_path)};
     auto input_data{read_file_to_vector(input_file_path)};
 
-    auto test_result_part_1{part_1(test_data)};
-    std::println("Part 1:");
-    std::println("Test {}, correct is 7", test_result_part_1);
-    auto result_part_1{part_1(input_data)};
-    std::println("Result: {}", result_part_1);
+    // auto test_result_part_1{part_1(test_data)};
+    // std::println("Part 1:");
+    // std::println("Test {}, correct is 7", test_result_part_1);
+    // auto result_part_1{part_1(input_data)};
+    // std::println("Result: {}", result_part_1);
 
-    // auto test_result_part_2{part_2(test_data)};
-    // std::println("Part 2:");
-    // std::println("Test {}, correct is ...", test_result_part_2);
+    auto test_result_part_2{part_2(test_data)};
+    std::println("Part 2:");
+    std::println("Test {}, correct is 33", test_result_part_2);
     // auto result_part_2{part_2(input_data)};
     // std::println("Result: {}", result_part_2);
 
