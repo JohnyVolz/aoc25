@@ -41,7 +41,7 @@ std::tuple<size_t, size_t, float64> find_max_dist(vector<vector<float64>> &grid)
     return result;
 }
 
-int64 part_1(string& data)
+vector<Point> parse_points(string &data)
 {
     vector<Point> points{};
     stringstream data_stream{data};
@@ -55,6 +55,68 @@ int64 part_1(string& data)
         Point point{x, y};
         points.push_back(point);
     }
+    return points;
+}
+
+vector<Point> get_all_points(vector<Point> &points)
+{
+    vector<Point> all_points{};
+    for (auto i{0}; i < points.size(); ++i)
+    {   
+        uint64 m;
+        if (i == points.size() - 1)
+        {
+            m = 0;
+        }
+        else
+        {
+            m = i + 1;
+        }
+        Point& a{points.at(i)};
+        Point& b{points.at(m)};
+               
+        if (a.x == b.x)
+        {
+            int64 y_min = a.y < b.y ? a.y : b.y;
+            int64 y_max = a.y > b.y ? a.y : b.y;
+            for (auto y{y_min+1}; y < y_max; y += 2)
+            {
+                Point p{a.x, y};
+                all_points.push_back(p);
+            }
+
+        }
+        if (a.y == b.y)
+        {
+            int64 x_min = a.x < b.x ? a.x : b.x;
+            int64 x_max = a.x > b.x ? a.x : b.x; 
+            for (auto x{x_min+1}; x < x_max; x += 2)
+            {
+                Point p{x, a.y};
+                all_points.push_back(p);
+            }
+        }
+        all_points.push_back(b);
+    
+    }
+    return all_points;
+}
+     
+bool point_inside(Point& a, Point& b, Point& t)
+{
+    int64 x_min = a.x < b.x ? a.x : b.x;
+    int64 x_max = a.x > b.x ? a.x : b.x; 
+    int64 y_min = a.y < b.y ? a.y : b.y;
+    int64 y_max = a.y > b.y ? a.y : b.y; 
+    if (t.x > x_min and t.x < x_max and t.y > y_min and t.y < y_max)
+        return true;
+    return false;
+}
+
+
+float64 part_1(string& data)
+{
+    vector<Point> points{parse_points(data)};
 
     vector<vector<float64>> grid;
     for (auto i{0}; i < points.size(); ++i)
@@ -77,15 +139,56 @@ int64 part_1(string& data)
     // std::println("{}", std::get<1>(res));
     // std::println("{}", std::get<2>(res));
 
-    int64 result{std::get<2>(res)};
+    float64 result{std::get<2>(res)};
 
     return result;
 }
 
-int64 part_2(string& data)
+float64 part_2(string& data)
 {
-    int64 result{0};
-    
+    vector<Point> points{parse_points(data)};
+    vector<Point> all_points{get_all_points(points)};
+    std::println("All points size: {}", all_points.size());
+
+    vector<vector<float64>> grid;
+    for (auto i{0}; i < points.size(); ++i)
+    {
+        vector<float64> row{};
+        for (auto j{0}; j < points.size(); ++j)
+        {
+            if (i == j)
+            {
+                row.push_back(0);
+                continue;
+            }
+            if (i == 1 and j==6)
+            {
+                auto a{0};
+            }
+            bool point_is_valide{true};
+            for (auto n{0}; n < all_points.size(); ++n)
+            {
+                if (point_inside(points.at(i), points.at(j), all_points.at(n)))
+                {
+                    point_is_valide = false;
+                    break;
+                }
+            }
+            if (point_is_valide)
+                row.push_back(distance(points.at(i), points.at(j)));
+            else
+                row.push_back(0);
+        }
+        grid.push_back(row);
+    }
+
+    auto res{find_max_dist(grid)};
+    std::println("{}", std::get<0>(res));
+    std::println("{}", std::get<1>(res));
+    std::println("{}", std::get<2>(res));
+
+    float64 result{std::get<2>(res)};
+
     return result;
 }
 
@@ -108,16 +211,16 @@ int main()
     auto test_data{read_file(test_file.path().string())};
     auto input_data{read_file(input_file.path().string())};
 
-    auto test_result_part_1{part_1(test_data)};
-    auto result_part_1{part_1(input_data)};
-    std::println("Part 1:");
-    std::println("Test {}, correct is 50", test_result_part_1);
-    std::println("Result: {}", result_part_1);
+    // auto test_result_part_1{part_1(test_data)};
+    // auto result_part_1{part_1(input_data)};
+    // std::println("Part 1:");
+    // std::println("Test {}, correct is 50", test_result_part_1);
+    // std::println("Result: {}", result_part_1);
 
     auto test_result_part_2{part_2(test_data)};
-    auto result_part_2{part_2(input_data)};
     std::println("Part 2:");
     std::println("Test {}, correct is 24", test_result_part_2);
+    auto result_part_2{part_2(input_data)};
     std::println("Result: {}", result_part_2);
 
     return 0;
